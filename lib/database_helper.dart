@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io' as io;
 import 'dart:async';
 class DatabaseHelper{
-  DatabaseHelper._privateConstructor();
+  // DatabaseHelper._privateConstructor();
   static Database? _database;
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -17,7 +17,13 @@ class DatabaseHelper{
     return await openDatabase(path,
         version: 1, onCreate: _onCreate);
   }
+   final _controller = StreamController<List<Map<String, dynamic>>>.broadcast();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
+  DatabaseHelper._privateConstructor() {
+  _controller.onListen = () async {
+    _controller.add(await fetchNotes());
+  };
+}
   static final _databaseName = "NotesDatabase.db";
   static final _databaseVersion = 1;
 
@@ -48,8 +54,8 @@ class DatabaseHelper{
           )
           ''');
   }
-  final _controller = StreamController<List<Map<String, dynamic>>>.broadcast();
-
+ 
+  
   Stream<List<Map<String, dynamic>>> get notesStream => _controller.stream;
 
   Future<int> saveNote(String title, String content) async {
@@ -61,44 +67,13 @@ class DatabaseHelper{
     _controller.add(await fetchNotes()); // emit a new event
     return id;
   }
-  // Future<int> saveNote(String title, String content) async {
-  //   Database db = await instance.database;
-  //   var date = DateTime.now().toIso8601String();
-  //   return await db.insert('notes_table', {'$columnTitle': title, ' $columnContent': content, ' $columnDate': date, '$columnPinned': 0,});
-  // }
+
   late Database _db;
 Future<List<Map<String, dynamic>>> fetchNotes() async {
   Database db = await instance.database;
   return await db.query('notes_table');
 }
 
-//   Future<List<Map<String, dynamic>>> queryAllRows() async {
-//     return await _db.query(table);
-//   }
-//   Future<int> queryRowCount() async {
-//     final results = await _db.rawQuery('SELECT COUNT(*) FROM $table');
-//     return Sqflite.firstIntValue(results) ?? 0;
-//   }
-//   Future<int> update(Map<String, dynamic> row) async {
-//     int id = row[columnId];
-//     return await _db.update(
-//       table,
-//       row,
-//       where: '$columnId = ?',
-//       whereArgs: [id],
-//     );
-//   }
-//   Future<int> insert(Map<String, dynamic> row) async {
-//     return await _db.insert(table, row);
-//   }
-//   Future<int> saveNote(String title, String content) async {
-//   var dbClient = await _db;
-//   var result = await dbClient.insert(
-//     'notes_table',
-//     {'title': title, 'content': content},
-//   );
-//   return result;
-  
-// }
+
 
 }
