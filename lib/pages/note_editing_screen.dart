@@ -34,6 +34,7 @@ class NoteEditingScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: TextField(
+          controller: contentController,
           decoration: InputDecoration(
             hintText: 'Note',
             border: InputBorder.none,
