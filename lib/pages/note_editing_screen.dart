@@ -1,17 +1,69 @@
 import 'package:flutter/material.dart';
 import '../database_helper.dart';
 
-class NoteEditingScreen extends StatelessWidget {
-  NoteEditingScreen({Key? key}) : super(key: key);
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
+class NoteEditingScreen extends StatefulWidget {
+  NoteEditingScreen({Key? key, required this.note}) : super(key: key);
+  final Map<String, dynamic> note;
+
+  @override
+  State<NoteEditingScreen> createState() => _NoteEditingScreenState();
+}
+
+class _NoteEditingScreenState extends State<NoteEditingScreen> {
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.note['title']);
+    _contentController = TextEditingController(text: widget.note['content']);
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void _saveChanges() async {
+    if (widget.note.containsKey('_id')) {
+      int rowsAffected = await DatabaseHelper.instance.updateNote(
+        widget.note['_id'],
+        _titleController.text,
+        _contentController.text,
+        
+      );
+      if (rowsAffected == 1) {
+        // The note was updated successfully
+        // Navigator.pop(context);
+      } else {
+        // An error occurred
+
+      }
+    } else {
+      // The note is new, insert it
+      int id = await DatabaseHelper.instance.saveNote(
+        _titleController.text,
+        _contentController.text,
+      );
+      if (id != 0) {
+        // The note was inserted successfully
+        // Navigator.pop(context);
+      } else {
+        // An error occurred
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: TextField(
-          controller: titleController,
+          controller: _titleController,
           decoration: InputDecoration(
             hintText: 'Title',
             border: InputBorder.none,
@@ -21,11 +73,8 @@ class NoteEditingScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () async {
-              int id = await DatabaseHelper.instance.saveNote(
-                titleController.text,
-                contentController.text,
-              );
-              print('Saved note with id: $id');
+              _saveChanges();
+              Navigator.pop(context);
             },
           ),
         ],
@@ -34,7 +83,7 @@ class NoteEditingScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: TextField(
-          controller: contentController,
+          controller: _contentController,
           decoration: InputDecoration(
             hintText: 'Note',
             border: InputBorder.none,

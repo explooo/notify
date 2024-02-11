@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'note_editing_screen.dart';
 import '../database_helper.dart';
+
 class SearchBarDelegate extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -34,6 +35,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
     return Container();
   }
 }
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -57,7 +59,7 @@ class HomeScreen extends StatelessWidget {
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: DatabaseHelper.instance.notesStream,
         builder: (context, snapshot) {
-           print('StreamBuilder snapshot: $snapshot');
+          print('StreamBuilder snapshot: $snapshot');
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -70,6 +72,14 @@ class HomeScreen extends StatelessWidget {
                 return ListTile(
                   title: Text(note['title']),
                   subtitle: Text(note['content']),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NoteEditingScreen(note: note),
+                      ),
+                    );
+                  },
                 );
               },
             );
@@ -77,10 +87,15 @@ class HomeScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => NoteEditingScreen()),
-    );},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => NoteEditingScreen(
+                      note: {},
+                    )),
+          );
+        },
         child: const Icon(Icons.add),
         backgroundColor: Colors.blue,
       ),
