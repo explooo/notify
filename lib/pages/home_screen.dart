@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Screen'),
+        title: Text('Notify'),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
