@@ -12,6 +12,7 @@ dependencies:
   sqflite: 
   path_provider:
   provider:
+  dynamic_color: ^1.6.9
 dev_dependencies:
   flutter_test:
     sdk: flutter

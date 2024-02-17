@@ -42,6 +42,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: ValueListenableBuilder<List<Map<String, dynamic>>>(
@@ -50,6 +51,8 @@ class HomeScreen extends StatelessWidget {
             if (value.isEmpty) {
               // No notes are selected, show the regular AppBar
               return AppBar(
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 title: Text('Notify'),
                 actions: [
                   IconButton(
@@ -66,6 +69,7 @@ class HomeScreen extends StatelessWidget {
             } else {
               // Some notes are selected, show the custom AppBar
               return AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                 leading: IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () {
@@ -83,10 +87,10 @@ class HomeScreen extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () async {
-                       for (var note in selectedNotes.value) {
-      await DatabaseHelper.instance.delete(note['_id']);
-    }
-    selectedNotes.value = [];
+                      for (var note in selectedNotes.value) {
+                        await DatabaseHelper.instance.delete(note['_id']);
+                      }
+                      selectedNotes.value = [];
                       // Delete the selected notes...
                     },
                   ),
@@ -94,6 +98,39 @@ class HomeScreen extends StatelessWidget {
               );
             }
           },
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('Drawer Header'),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.label),
+              title: Text(
+                'Labels',
+              ),
+              onTap: () {
+                // Update the state of the app
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.archive),
+              title: Text('Archive'),
+              onTap: () {
+                // Update the state of the app
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+          ],
         ),
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
@@ -106,51 +143,64 @@ class HomeScreen extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             return ValueListenableBuilder<List<Map<String, dynamic>>>(
-        valueListenable: selectedNotes,
-        builder: (context, value, child) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> note = snapshot.data![index];
-                return InkWell(
-                  onLongPress: () {
-                    selectedNotes.value = List.from(selectedNotes.value)
-                      ..add(note);
-                  },
-                  onTap: () {
-                    if (selectedNotes.value.isNotEmpty) {
-                      // Some notes are already selected, add this note to the selected notes
-                      if (!selectedNotes.value.any((selectedNote) =>
-                          selectedNote['_id'] == note['_id'])) {
+              valueListenable: selectedNotes,
+              builder: (context, value, child) {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    Map<String, dynamic> note = snapshot.data![index];
+                    return InkWell(
+                      onLongPress: () {
                         selectedNotes.value = List.from(selectedNotes.value)
                           ..add(note);
-                      }
-                    } else {
-                      // No notes are selected, navigate to the NoteEditingScreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NoteEditingScreen(note: note),
+                      },
+                      onTap: () {
+                        if (selectedNotes.value.isNotEmpty) {
+                          // Some notes are already selected, add this note to the selected notes
+                          if (!selectedNotes.value.any((selectedNote) =>
+                              selectedNote['_id'] == note['_id'])) {
+                            selectedNotes.value = List.from(selectedNotes.value)
+                              ..add(note);
+                          }
+                        } else {
+                          // No notes are selected, navigate to the NoteEditingScreen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  NoteEditingScreen(note: note),
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(6.0, 2.0, 6.0, 4.0),
+                          child: Material(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Theme.of(context).colorScheme.surfaceVariant,
+                            child: ListTile(
+                              tileColor: selectedNotes.value.any(
+                                      (selectedNote) =>
+                                          selectedNote['_id'] == note['_id'])
+                                  ? Theme.of(context).colorScheme.onSecondary
+                                  : null,
+                              title: Text(note['title']),
+                              subtitle: Text(note['content']),
+                            ),
+                          ),
                         ),
-                      );
-                    }
+                      ),
+                    );
                   },
-                  child: ListTile(
-                    tileColor: selectedNotes.value.any(
-                            (selectedNote) => selectedNote['_id'] == note['_id'])
-                        ? Colors.grey
-                        : null,
-                    title: Text(note['title']),
-                    subtitle: Text(note['content']),
-                    ),
-              );
-            },
-          );
+                );
+              },
+            );
+          }
         },
-      );
-    }
-  },
-),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -162,7 +212,8 @@ class HomeScreen extends StatelessWidget {
           );
         },
         child: const Icon(Icons.add),
-        backgroundColor: Colors.blue,
+        // backgroundColor: Colors.blue,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
     );
   }
