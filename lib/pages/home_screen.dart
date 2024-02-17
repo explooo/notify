@@ -82,7 +82,11 @@ class HomeScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(Icons.delete),
-                    onPressed: () {
+                    onPressed: () async {
+                       for (var note in selectedNotes.value) {
+      await DatabaseHelper.instance.delete(note['_id']);
+    }
+    selectedNotes.value = [];
                       // Delete the selected notes...
                     },
                   ),
@@ -108,7 +112,7 @@ class HomeScreen extends StatelessWidget {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> note = snapshot.data![index];
-                return GestureDetector(
+                return InkWell(
                   onLongPress: () {
                     selectedNotes.value = List.from(selectedNotes.value)
                       ..add(note);

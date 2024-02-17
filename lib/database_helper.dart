@@ -98,4 +98,10 @@ class DatabaseHelper {
  
     return id;
   }
+  Future<int> delete(int id) async {
+    Database db = await instance.database;
+    int result = await db.delete('notes_table', where: '_id = ?', whereArgs: [id]);
+    _controller.add(await fetchNotes());
+    return result;
+  }
 }
