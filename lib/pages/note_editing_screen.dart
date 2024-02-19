@@ -10,6 +10,7 @@ class NoteEditingScreen extends StatefulWidget {
 }
 
 class _NoteEditingScreenState extends State<NoteEditingScreen> {
+  bool isPinned = false;
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   @override
@@ -33,6 +34,7 @@ class _NoteEditingScreenState extends State<NoteEditingScreen> {
         widget.note['_id'],
         _titleController.text,
         _contentController.text,
+        isPinned ? 1 : 0,
         
       );
       if (rowsAffected == 1) {
@@ -97,8 +99,14 @@ class _NoteEditingScreenState extends State<NoteEditingScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.push_pin_outlined),
-              onPressed: () {},
+              icon: Icon(isPinned ? Icons.push_pin : Icons.push_pin_outlined),
+              onPressed: () {
+                setState(() {
+                isPinned = !isPinned;
+              });
+              // Update the note's "pinned" value in the database
+              DatabaseHelper.instance.updateNote(widget.note['_id'], _titleController.text, _contentController.text, isPinned ? 1 : 0);
+              },
             ),
             IconButton(
               icon: Icon(Icons.add_alert_outlined),

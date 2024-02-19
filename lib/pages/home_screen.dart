@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'note_editing_screen.dart';
 import '../database_helper.dart';
-
+import 'package:animations/animations.dart';
 class SearchBarDelegate extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -142,6 +142,7 @@ class HomeScreen extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
+            
             return ValueListenableBuilder<List<Map<String, dynamic>>>(
               valueListenable: selectedNotes,
               builder: (context, value, child) {
@@ -201,20 +202,34 @@ class HomeScreen extends StatelessWidget {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton:  customFab(),
+    );
+  }
+}
+
+class customFab extends StatelessWidget {
+  const customFab({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) => OpenContainer(
+    openBuilder: (context, _) =>NoteEditingScreen(note: {}),
+    closedShape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+    ),
+    closedElevation: 6.0,
+    closedColor: Theme.of(context).colorScheme.inversePrimary,
+    // transitionDuration: Duration(milliseconds: 500),
+    transitionType: ContainerTransitionType.fadeThrough,
+    closedBuilder: (context, openContainer)=> FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => NoteEditingScreen(
-                      note: {},
-                    )),
-          );
-        },
+          openContainer();},
         child: const Icon(Icons.add),
         // backgroundColor: Colors.blue,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-    );
-  }
+     
+    ),
+  
+  );
 }

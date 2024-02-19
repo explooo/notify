@@ -79,7 +79,7 @@ class DatabaseHelper {
     return await db.query('notes_table');
   }
 
-  Future<int> updateNote(int id, String title, String content) async {
+  Future<int> updateNote(int id, String title, String content, int isPinned) async {
     
     Database db = await instance.database;
     
@@ -89,7 +89,7 @@ class DatabaseHelper {
         'title': title,
         'content': content,
         'date': DateTime.now().toIso8601String(),
-        'pinned': 0
+        'pinned': isPinned,
       },
       where: '_id = ?',
       whereArgs: [id],
