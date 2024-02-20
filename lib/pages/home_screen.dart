@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'note_editing_screen.dart';
 import '../database_helper.dart';
 import 'package:animations/animations.dart';
+
 class SearchBarDelegate extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () {
           query = '';
         },
@@ -18,7 +19,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, '');
       },
@@ -44,7 +45,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
+        preferredSize: const Size.fromHeight(kToolbarHeight),
         child: ValueListenableBuilder<List<Map<String, dynamic>>>(
           valueListenable: selectedNotes,
           builder: (context, value, child) {
@@ -53,10 +54,10 @@ class HomeScreen extends StatelessWidget {
               return AppBar(
                 backgroundColor:
                     Theme.of(context).colorScheme.secondaryContainer,
-                title: Text('Notify'),
+                title: const Text('Notify'),
                 actions: [
                   IconButton(
-                    icon: Icon(Icons.search),
+                    icon: const Icon(Icons.search),
                     onPressed: () {
                       showSearch(
                         context: context,
@@ -71,7 +72,7 @@ class HomeScreen extends StatelessWidget {
               return AppBar(
                 backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                 leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     selectedNotes.value = [];
                   },
@@ -79,13 +80,13 @@ class HomeScreen extends StatelessWidget {
                 title: Text('${value.length} selected'),
                 actions: [
                   IconButton(
-                    icon: Icon(Icons.archive),
+                    icon: const Icon(Icons.archive),
                     onPressed: () {
                       // Archive the selected notes...
                     },
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () async {
                       for (var note in selectedNotes.value) {
                         await DatabaseHelper.instance.delete(note['_id']);
@@ -105,14 +106,14 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text('Drawer Header'),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceVariant,
               ),
+              child: const Text('Drawer Header'),
             ),
             ListTile(
-              leading: Icon(Icons.label),
-              title: Text(
+              leading: const Icon(Icons.label),
+              title: const Text(
                 'Labels',
               ),
               onTap: () {
@@ -122,8 +123,8 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.archive),
-              title: Text('Archive'),
+              leading: const Icon(Icons.archive),
+              title: const Text('Archive'),
               onTap: () {
                 // Update the state of the app
                 // Then close the drawer
@@ -138,11 +139,10 @@ class HomeScreen extends StatelessWidget {
         builder: (context, snapshot) {
           print('StreamBuilder snapshot: $snapshot');
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            
             return ValueListenableBuilder<List<Map<String, dynamic>>>(
               valueListenable: selectedNotes,
               builder: (context, value, child) {
@@ -150,50 +150,73 @@ class HomeScreen extends StatelessWidget {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     Map<String, dynamic> note = snapshot.data![index];
-                    return InkWell(
-                      onLongPress: () {
-                        selectedNotes.value = List.from(selectedNotes.value)
-                          ..add(note);
-                      },
-                      onTap: () {
-                        if (selectedNotes.value.isNotEmpty) {
-                          // Some notes are already selected, add this note to the selected notes
-                          if (!selectedNotes.value.any((selectedNote) =>
-                              selectedNote['_id'] == note['_id'])) {
-                            selectedNotes.value = List.from(selectedNotes.value)
-                              ..add(note);
-                          }
-                        } else {
-                          // No notes are selected, navigate to the NoteEditingScreen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NoteEditingScreen(note: note),
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(26.0),
+                              // color: Theme.of(context).colorScheme.secondaryContainer,
                             ),
-                          );
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(6.0, 2.0, 6.0, 4.0),
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Theme.of(context).colorScheme.surfaceVariant,
-                            child: ListTile(
-                              tileColor: selectedNotes.value.any(
-                                      (selectedNote) =>
+                            child: Card(
+                              color: selectedNotes.value.any((selectedNote) =>
                                           selectedNote['_id'] == note['_id'])
-                                  ? Theme.of(context).colorScheme.onSecondary
-                                  : null,
-                              title: Text(note['title']),
-                              subtitle: Text(note['content']),
+                                      ? Theme.of(context).colorScheme.onSecondary
+                                      : Theme.of(context).colorScheme.secondaryContainer,
+                              child: InkWell(
+                                 borderRadius: BorderRadius.circular(14.0),
+                                onLongPress: () {
+                                  selectedNotes.value =
+                                      List.from(selectedNotes.value)..add(note);
+                                },
+                                onTap: () {
+                                  if (selectedNotes.value.isNotEmpty) {
+                                    // Some notes are already selected, add this note to the selected notes
+                                    if (!selectedNotes.value.any((selectedNote) =>
+                                        selectedNote['_id'] == note['_id'])) {
+                                      selectedNotes.value =
+                                          List.from(selectedNotes.value)..add(note);
+                                    }
+                                  } else {
+                                    // No notes are selected, navigate to the NoteEditingScreen
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            NoteEditingScreen(note: note),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    // borderRadius: BorderRadius.circular(26.0),
+                                   
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          note['title'],
+                                          style: const TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        Text(note['content']),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     );
                   },
                 );
@@ -202,11 +225,12 @@ class HomeScreen extends StatelessWidget {
           }
         },
       ),
-      floatingActionButton:  customFab(),
+      floatingActionButton: const customFab(),
     );
   }
 }
 
+// ignore: camel_case_types
 class customFab extends StatelessWidget {
   const customFab({
     super.key,
@@ -214,22 +238,21 @@ class customFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => OpenContainer(
-    openBuilder: (context, _) =>NoteEditingScreen(note: {}),
-    closedShape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(16)),
-    ),
-    closedElevation: 6.0,
-    closedColor: Theme.of(context).colorScheme.inversePrimary,
-    // transitionDuration: Duration(milliseconds: 500),
-    transitionType: ContainerTransitionType.fadeThrough,
-    closedBuilder: (context, openContainer)=> FloatingActionButton(
-        onPressed: () {
-          openContainer();},
-        child: const Icon(Icons.add),
-        // backgroundColor: Colors.blue,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-     
-    ),
-  
-  );
+        openBuilder: (context, _) => NoteEditingScreen(note: const {}),
+        closedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        closedElevation: 6.0,
+        closedColor: Theme.of(context).colorScheme.inversePrimary,
+        // transitionDuration: Duration(milliseconds: 500),
+        transitionType: ContainerTransitionType.fadeThrough,
+        closedBuilder: (context, openContainer) => FloatingActionButton(
+          onPressed: () {
+            openContainer();
+          },
+          // backgroundColor: Colors.blue,
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          child: const Icon(Icons.add),
+        ),
+      );
 }

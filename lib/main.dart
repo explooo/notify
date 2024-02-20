@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/home_screen.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+// import 'package:dynamic_color/dynamic_color.dart';
 // import 'pages/login_screen.dart';
 import 'themes/theme_data.dart';
 void main() {

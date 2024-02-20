@@ -27,7 +27,6 @@ class _NoteEditingScreenState extends State<NoteEditingScreen> {
     super.dispose();
   }
 
-  @override
   void _saveChanges() async {
     if (widget.note.containsKey('_id')) {
       int rowsAffected = await DatabaseHelper.instance.updateNote(

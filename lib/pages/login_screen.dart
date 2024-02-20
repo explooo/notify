@@ -15,26 +15,26 @@ class login extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 100),
-          Text('Login', style: TextStyle(fontSize: 30)),
+          const Text('Login', style: TextStyle(fontSize: 30)),
           const SizedBox(height: 50),
-          MyTextField(
+          const MyTextField(
             hintText: 'Email',
             obscureText: false,
           ),
           const SizedBox(height: 20),
-          MyTextField(
+          const MyTextField(
             hintText: 'Password',
             obscureText: true,
           ),
           const SizedBox(height: 20),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
                   onTap: () {},
-                  child: Text(
+                  child: const Text(
                     'Forgot Password?',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -52,7 +52,7 @@ class login extends StatelessWidget {
             color: Colors.grey,
             child: MaterialButton(
               minWidth: MediaQuery.of(context).size.width - 55,
-              padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
+              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -60,7 +60,7 @@ class login extends StatelessWidget {
                   (Route<dynamic> route) => false,
                 );
               },
-              child: Text(
+              child: const Text(
                 "Login",
                 textAlign: TextAlign.center,
               ),
@@ -68,13 +68,13 @@ class login extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
                   onTap: () {},
-                  child: Text(
+                  child: const Text(
                     'New User? Sign Up',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,

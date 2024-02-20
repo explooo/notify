@@ -26,7 +26,7 @@ class DatabaseHelper {
     };
   }
   static final _databaseName = "NotesDatabase.db";
-  static final _databaseVersion = 1;
+  // static final _databaseVersion = 1;
 
   static final table = 'notes_table';
 
@@ -72,6 +72,7 @@ class DatabaseHelper {
     return id;
   }
 
+  // ignore: unused_field
   late Database _db;
   Future<List<Map<String, dynamic>>> fetchNotes() async {
       
