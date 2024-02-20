@@ -160,59 +160,65 @@ class HomeScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(26.0),
                               // color: Theme.of(context).colorScheme.secondaryContainer,
                             ),
-                            child: Card(
-                              color: selectedNotes.value.any((selectedNote) =>
-                                          selectedNote['_id'] == note['_id'])
-                                      ? Theme.of(context).colorScheme.onSecondary
-                                      : Theme.of(context).colorScheme.secondaryContainer,
-                              child: InkWell(
-                                 borderRadius: BorderRadius.circular(14.0),
-                                onLongPress: () {
-                                  selectedNotes.value =
-                                      List.from(selectedNotes.value)..add(note);
-                                },
-                                onTap: () {
-                                  if (selectedNotes.value.isNotEmpty) {
-                                    // Some notes are already selected, add this note to the selected notes
-                                    if (!selectedNotes.value.any((selectedNote) =>
-                                        selectedNote['_id'] == note['_id'])) {
+                            child: OpenContainer(
+                              closedColor:Colors.transparent,
+                                          closedElevation: 0.0,
+                               closedShape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+          
+        ),
+                              closedBuilder: (BuildContext context,
+                                  VoidCallback openContainer,
+                                  ) {
+                                return Card(
+                                  elevation: 0.0,
+                                  color: selectedNotes.value.any(
+                                          (selectedNote) =>
+                                              selectedNote['_id'] ==
+                                              note['_id'])
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .secondaryContainer,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(14.0),
+                                    onLongPress: () {
                                       selectedNotes.value =
-                                          List.from(selectedNotes.value)..add(note);
-                                    }
-                                  } else {
-                                    // No notes are selected, navigate to the NoteEditingScreen
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            NoteEditingScreen(note: note),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    // borderRadius: BorderRadius.circular(26.0),
-                                   
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          note['title'],
-                                          style: const TextStyle(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold),
+                                          List.from(selectedNotes.value)
+                                            ..add(note);
+                                    },
+                                    onTap: openContainer,
+                                    child: Container(
+                                      decoration: const BoxDecoration(),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              note['title'],
+                                              style: const TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 8.0),
+                                            Text(note['content']),
+                                          ],
                                         ),
-                                        const SizedBox(height: 8.0),
-                                        Text(note['content']),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
+                              openBuilder:
+                                  (BuildContext context, VoidCallback _) {
+                                return NoteEditingScreen(note: note);
+                              },
+                              transitionType:
+                                  ContainerTransitionType.fade,
                             ),
                           ),
                         ),
@@ -242,10 +248,10 @@ class customFab extends StatelessWidget {
         closedShape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
-        closedElevation: 6.0,
+        // closedElevation: 6.0,
         closedColor: Theme.of(context).colorScheme.inversePrimary,
         // transitionDuration: Duration(milliseconds: 500),
-        transitionType: ContainerTransitionType.fadeThrough,
+        // transitionType: ContainerTransitionType.fade,
         closedBuilder: (context, openContainer) => FloatingActionButton(
           onPressed: () {
             openContainer();
