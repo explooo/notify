@@ -161,15 +161,16 @@ class HomeScreen extends StatelessWidget {
                               // color: Theme.of(context).colorScheme.secondaryContainer,
                             ),
                             child: OpenContainer(
-                              closedColor:Colors.transparent,
-                                          closedElevation: 0.0,
-                               closedShape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-          
-        ),
-                              closedBuilder: (BuildContext context,
-                                  VoidCallback openContainer,
-                                  ) {
+                              closedColor: Colors.transparent,
+                              closedElevation: 0.0,
+                              closedShape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(16)),
+                              ),
+                              closedBuilder: (
+                                BuildContext context,
+                                VoidCallback openContainer,
+                              ) {
                                 return Card(
                                   elevation: 0.0,
                                   color: selectedNotes.value.any(
@@ -189,7 +190,23 @@ class HomeScreen extends StatelessWidget {
                                           List.from(selectedNotes.value)
                                             ..add(note);
                                     },
-                                    onTap: openContainer,
+                                    onTap: () {
+                                      if (selectedNotes.value.isNotEmpty) {
+                                        // Some notes are already selected, add this note to the selected notes
+                                        if (!selectedNotes.value.any(
+                                            (selectedNote) =>
+                                                selectedNote['_id'] ==
+                                                note['_id'])) {
+                                          selectedNotes.value =
+                                              List.from(selectedNotes.value)
+                                                ..add(note);
+                                        } 
+                                        }
+                                     else {
+                                        openContainer();
+                                      }
+                                    }
+                                    ,
                                     child: Container(
                                       decoration: const BoxDecoration(),
                                       child: Padding(
@@ -217,8 +234,7 @@ class HomeScreen extends StatelessWidget {
                                   (BuildContext context, VoidCallback _) {
                                 return NoteEditingScreen(note: note);
                               },
-                              transitionType:
-                                  ContainerTransitionType.fade,
+                              transitionType: ContainerTransitionType.fade,
                             ),
                           ),
                         ),
